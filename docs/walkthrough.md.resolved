@@ -1,0 +1,45 @@
+# DLP Solution Walkthrough
+
+## Overview
+We have built a Data Leakage Prevention (DLP) system in Python that monitors:
+- **File System**: New or modified files in monitored directories.
+- **Clipboard**: Text copied to the clipboard.
+
+It uses **Regex** and **Spacy (NLP)** to detect sensitive information like:
+- Emails
+- SSNs
+- Credit Card Numbers
+- Names (PERSON)
+- Organizations (ORG)
+
+## Features
+- **Real-time Monitoring**: Detects PII instantly.
+- **Logging**: Alerts are printed to console and saved to `dlp_log.log`.
+- **Extensible**: Pattern based detection + Machine Learning NER.
+
+## Verification Scenarios
+
+### 1. Clipboard Detection
+- Run [main.py](file:///e:/BS%20CY/Projects/DLP%20solution/main.py).
+- Copy the text: `My secret is secret@example.com`
+- **Expected Result**: Console warns "SENSITIVE DATA DETECTED" -> [EMAIL] secret@example.com.
+
+### 2. File Detection
+- Run [main.py](file:///e:/BS%20CY/Projects/DLP%20solution/main.py) monitoring the current folder (default).
+- Create a file `secrets.txt` with content: `SSN: 123-45-6789`.
+- **Expected Result**: system detects modification and logs the SSN detection.
+
+## How to Run
+```bash
+# Install dependencies
+pip install -r requirements.txt
+python -m spacy download en_core_web_sm
+
+# Run
+python main.py --path ./test_monitor
+```
+
+## Troubleshooting
+- **ModuleNotFoundError**: Ensure you installed requirements in the same environment you are running python in.
+    - Try: `python -m pip install -r requirements.txt`
+- **Spacy Model Error**: If `en_core_web_sm` is missing, the system will attempt to download it automatically. If that fails, run: `python -m spacy download en_core_web_sm` manually.

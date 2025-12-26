@@ -1,0 +1,26 @@
+# Implementation Plan - Initial Directory Scan
+
+## Goal
+Update the DLP solution to scan **existing files** in the monitored directory when the program starts, instead of only waiting for new/modified events.
+
+## User Review Required
+None. This is a non-breaking enhancement.
+
+## Proposed Changes
+
+### [MODIFY] [src/monitor.py](file:///e:/BS%20CY/Projects/DLP%20solution/src/monitor.py)
+- Add a new method `scan_existing_files()` to [SystemMonitor](file:///e:/BS%20CY/Projects/DLP%20solution/src/monitor.py#41-88).
+- This method will:
+    - Walk through the `watch_path` using `os.walk`.
+    - Apply the same [process_file](file:///e:/BS%20CY/Projects/DLP%20solution/src/monitor.py#21-40) logic (check extension, read, scan) to every existing file.
+- Call `scan_existing_files()` inside [start_filesystem_monitor()](file:///e:/BS%20CY/Projects/DLP%20solution/src/monitor.py#48-53) *before* starting the observer.
+
+## Verification Plan
+
+### Automated
+- None (Visual verification required).
+
+### Manual Verification
+1.  **Pre-condition**: Create a file `old_secret.txt` with sensitive data inside `test_monitor` *before* running the script.
+2.  **Action**: Run `python main.py --path ./test_monitor`.
+3.  **Expectation**: The system should immediately log a "SENSITIVE DATA DETECTED" warning for `old_secret.txt` during startup.

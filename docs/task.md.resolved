@@ -1,0 +1,21 @@
+# Data Leakage Prevention (DLP) Project
+
+- [x] Project Initialization & Architecture Design
+    - [x] Create project structure
+    - [x] Define dependencies (requirements.txt)
+    - [x] Create Architecture Design Document (in implementation_plan.md)
+- [/] Core Detection Engine (ML/Pattern Matching)
+    - [x] Implement PII detection (Regex + Basic NLP)
+    - [x] Integrate Advanced ML model (e.g., Spacy/Transformers) for sensitive data context
+- [x] Monitoring Modules
+    - [x] File System Monitor (Watchdog) for USB/Folder activity
+    - [x] Clipboard Monitor (Copy/Paste detection)
+    - [x] Scan existing files on startup
+    - [x] Network/Email Activity Simulation or Monitoring (Proof of Concept)
+- [x] Alerting & Reporting System
+    - [x] backend logging
+    - [x] Smart Alerting (Deduplication & Rate Limiting)
+    - [ ] Basic Dashboard (Streamlit or Flask)
+- [x] Verification & Testing
+    - [x] Test PII detection accuracy
+    - [x] Test monitoring triggers
