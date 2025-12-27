@@ -1,1 +1,5 @@
-dlp_log.log*.log *.tmpsrc/__pycache__/.env.env.*
+<<<<<<< HEAD
+dlp_log.log*.log *.tmpsrc/__pycache__/.env.env.*
+=======
+dlp_log.log*.log *.tmpsrc/__pycache__/.env.env.*dlp_log.log
+>>>>>>> 42fa9a3 (DLP)
