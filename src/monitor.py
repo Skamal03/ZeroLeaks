@@ -1,5 +1,6 @@
 import time
 import os
+import threading
 import pyperclip
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
@@ -91,6 +92,9 @@ class SystemMonitor:
         self.watch_paths = watch_paths
         self.observer = Observer()
         self.running = False
+        self.usb_thread = None
+        self.usb_thread_running = False
+        self.known_drives = set()
 
     def scan_existing_files(self, specific_path=None):
         """Scans all existing files in the watch paths (or a specific one) on startup."""
@@ -205,7 +209,47 @@ class SystemMonitor:
         self.start_filesystem_monitor()
         self.start_clipboard_monitor()
 
+    def start_usb_monitor(self, interval=5):
+        """Starts the background USB polling thread."""
+        if self.usb_thread_running:
+            return
+
+        logger.info("External Drive Scanner started. Waiting for USB...")
+        self.usb_thread_running = True
+        
+        # Initialize known drives
+        current_drives = get_removable_drives()
+        for d in current_drives:
+            self.known_drives.add(d)
+            self.add_path(d)
+
+        self.usb_thread = threading.Thread(target=self._poll_usb_drives, args=(interval,), daemon=True)
+        self.usb_thread.start()
+
+    def stop_usb_monitor(self):
+        """Stops the USB polling thread."""
+        if self.usb_thread_running:
+            self.usb_thread_running = False
+            if self.usb_thread:
+                self.usb_thread.join(timeout=1.0)
+            logger.info("External Drive Scanner stopped.")
+
+    def _poll_usb_drives(self, interval):
+        while self.usb_thread_running:
+            try:
+                current_drives = get_removable_drives()
+                for drive in current_drives:
+                    if drive not in self.known_drives:
+                        logger.info(f"New external drive detected: {drive}")
+                        self.add_path(drive) 
+                        self.known_drives.add(drive)
+                time.sleep(interval)
+            except Exception as e:
+                logger.error(f"USB Polling Error: {e}")
+                time.sleep(interval)
+
     def stop(self):
         self.running = False
         self.stop_filesystem_monitor()
+        self.stop_usb_monitor()
         logger.info("Monitors stopped.")

@@ -16,6 +16,10 @@ class DeduplicationLogger:
         # Dictionary to store last logged time: {hash: timestamp}
         self.alert_history = {}
 
+    def addHandler(self, hdlr):
+        """Delegates addHandler to the underlying logger."""
+        self.logger.addHandler(hdlr)
+
     def _generate_key(self, source, match_type, value):
         """Generates a unique key for the event."""
         # We hash the value to avoid keeping sensitive plain text in memory if possible, 
